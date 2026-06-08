@@ -1,5 +1,7 @@
 import { text } from 'motion/react-client';
 import { Application, Container, Graphics, Text, Sprite, Assets, BlurFilter } from 'pixi.js';
+import { Player } from './game/Player'
+import { TriangleButton } from './ui/buttons/TriangleButton';
 
 (async () => {
     const app = new Application();
@@ -77,6 +79,26 @@ import { Application, Container, Graphics, Text, Sprite, Assets, BlurFilter } fr
 
     app.stage.addChild(balanceWordText);
 
+    // Creating Player class
+
+    const player = new Player(10000);
+
+    // Current balance value text
+
+    const currentBalanceValue = new Text({
+      text: `${player.balance}`,
+      style: {
+        font: 'Open Sans',
+        fontSize: '24',
+        fontWeight: 'bold',
+        fill: 0xffffff,
+      }
+    })
+
+    currentBalanceValue.position.set(560, 665);
+
+    app.stage.addChild(currentBalanceValue);
+
     // BET Text
 
     const betText = new Text({
@@ -93,5 +115,58 @@ import { Application, Container, Graphics, Text, Sprite, Assets, BlurFilter } fr
     betText.y = 665;
 
     app.stage.addChild(betText);
+
+    // Buttons to bets
+
+    const betDown = new TriangleButton({
+      direction: 'left',
+      label: '-'
+    });
+
+    betDown.position.set(900, 665);
+    app.stage.addChild(betDown);
+
+    const betUp = new TriangleButton({
+      direction: 'right',
+      label: '+'
+    });
+
+    betUp.position.set(1150, 665);
+    app.stage.addChild(betUp);
+
+    // Container for the block for a number and a number to guess
+
+    const blockForANumberContainer = new Container();
+    blockForANumberContainer.position.set(710, 325);
+
+    // block for a number
+
+    const blockForANumberImage = await Assets.load('./luckygame assets/images/block for a number.png');
+    const blockForANumber = new Sprite(blockForANumberImage);
+    blockForANumber.width = 135;
+    blockForANumber.height = 150;
+    blockForANumber.position.set(0, 0);
+
+    // numberToGuess
+
+    let numberToGuess;
+    const numberToGuessText = new Text({
+      text: '?',
+      style: {
+        font: 'Open Sans',
+        fontSize: 110,
+        fontWeight: 'bold',
+        fill: 0xffffff,
+      }
+    });
+
+    numberToGuessText.position.set(33, 10);
+
+    // Add to Container
+    
+    blockForANumberContainer.addChild(blockForANumber);
+    blockForANumberContainer.addChild(numberToGuessText);
+
+    app.stage.addChild(blockForANumberContainer);
 
 })();
