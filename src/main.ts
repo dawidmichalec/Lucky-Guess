@@ -4,6 +4,7 @@ import { Player } from './game/Player'
 import { TriangleButton } from './ui/buttons/TriangleButton';
 import { ModeButton } from './ui/buttons/ModeButton';
 import { GAME_MODES, GameModeId } from './game/GameMode';
+import { BET_LEVELS } from './game/BetLevels';
 
 (async () => {
     const app = new Application();
@@ -162,7 +163,7 @@ import { GAME_MODES, GameModeId } from './game/GameMode';
     // Current balance value text
 
     const currentBalanceValue = new Text({
-      text: `${player.balance}`,
+      text: `${player.balance.toFixed(2)}`,
       style: {
         font: 'Open Sans',
         fontSize: '24',
@@ -177,6 +178,28 @@ import { GAME_MODES, GameModeId } from './game/GameMode';
 
     // BET Text
 
+    let currentBetIndex = 3;
+    const currentBet = BET_LEVELS[currentBetIndex];
+
+    const betValueText = new Text({
+      text: `${currentBet.toFixed(2)}`,
+      style: {
+        font: 'Open Sans',
+        fontSize: 24,
+        fontWeight: 'bold',
+        fill: 0xffffff,
+      }
+    });
+
+    betValueText.position.set(980, 665);
+    app.stage.addChild(betValueText);
+
+    // update bet value text
+
+    function updateBetText() {
+      betValueText.text = BET_LEVELS[currentBetIndex].toFixed(2);
+    }
+
     const betText = new Text({
       text: 'BET',
       style: {
@@ -187,27 +210,37 @@ import { GAME_MODES, GameModeId } from './game/GameMode';
       }
     });
 
-    betText.x = 1050;
-    betText.y = 665;
-
+    betText.position.set(1060, 665);
     app.stage.addChild(betText);
 
     // Buttons to bets
 
     const betDown = new TriangleButton({
       direction: 'left',
-      label: '-'
+      label: '-',
+      onClick: () => {
+        if (currentBetIndex > 0) {
+          currentBetIndex--;
+          updateBetText();
+        }
+      }
     });
 
-    betDown.position.set(900, 665);
+    betDown.position.set(920, 660);
     app.stage.addChild(betDown);
 
     const betUp = new TriangleButton({
       direction: 'right',
-      label: '+'
+      label: '+',
+      onClick: () => {
+        if (currentBetIndex < BET_LEVELS.length - 1) {
+          currentBetIndex++;
+          updateBetText();
+        }
+      }
     });
 
-    betUp.position.set(1150, 665);
+    betUp.position.set(1120, 660);
     app.stage.addChild(betUp);
 
     // Container for the block for a number and a number to guess

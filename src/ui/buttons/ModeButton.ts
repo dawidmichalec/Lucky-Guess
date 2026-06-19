@@ -58,7 +58,7 @@ export class ModeButton extends Container {
     const text = new Text({
         text: label,
         style: {
-        fontFamily: 'Open Sans',
+        font: 'Open Sans',
         fontSize: 26,
         fontWeight: 'bold',
         fill: 0xffffff,

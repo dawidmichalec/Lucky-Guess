@@ -3,42 +3,78 @@ import { Container, Graphics, Text } from 'pixi.js';
 type TriangleButtonProps = {
   direction: 'left' | 'right';
   label: string;
+  onClick?: () => void;
 };
 
 export class TriangleButton extends Container {
-  constructor({ direction, label }: TriangleButtonProps) {
+  private bg: Graphics;
+  private defaultColor = 0xffd700;
+  private pressedColor = 0xe6b800;
+
+  constructor({
+    direction,
+    label,
+    onClick,
+  }: TriangleButtonProps) {
     super();
 
-    const bg = new Graphics()
-      .poly([
-        0, 0,
-        40, 20,
-        0, 30
-      ])
-      .fill(0xffd700);
+    this.bg = new Graphics();
+
+    this.draw(this.defaultColor);
 
     if (direction === 'left') {
-      bg.scale.x = -1;
-      bg.x = 40;
+      this.bg.scale.x = -1;
+      this.bg.x = 50;
     }
+
+    this.bg.eventMode = 'static';
+    this.bg.cursor = 'pointer';
 
     const text = new Text({
       text: label,
       style: {
-        fontFamily: 'Anton',
-        fontSize: 58,
+        font: 'Open Sans',
+        fontWeight: 'bold',
+        fontSize: 36,
         fill: 0xffffff,
-      }
+      },
     });
-    
-    if (direction === 'left') {
-        text.position.set(19, -40);
-    } else {
-        text.position.set(1, -40);
-    }
-    
 
-    this.addChild(bg);
+    text.anchor.set(0.5);
+    text.position.set(20, 15);
+
+    if (label === '+') {
+      text.position.set(15, 20);
+    } else {
+      text.position.set(35, 15);
+    }
+
+    this.bg.on('pointerdown', () => {
+      this.draw(this.pressedColor);
+    });
+
+    this.bg.on('pointerup', () => {
+      this.draw(this.defaultColor);
+      onClick?.();
+    });
+
+    this.bg.on('pointerupoutside', () => {
+      this.draw(this.defaultColor);
+    });
+
+    this.addChild(this.bg);
     this.addChild(text);
+  }
+
+  private draw(color: number) {
+    this.bg.clear();
+
+    this.bg
+      .poly([
+        0, 0,
+        50, 20,
+        0, 40,
+      ])
+      .fill(color);
   }
 }
