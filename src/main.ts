@@ -5,6 +5,7 @@ import { TriangleButton } from './ui/buttons/TriangleButton';
 import { ModeButton } from './ui/buttons/ModeButton';
 import { GAME_MODES, GameModeId } from './game/GameMode';
 import { BET_LEVELS } from './game/BetLevels';
+import { PopupManager } from './ui/popups/PopupManager';
 
 (async () => {
     const app = new Application();
@@ -194,10 +195,33 @@ import { BET_LEVELS } from './game/BetLevels';
     betValueText.position.set(980, 665);
     app.stage.addChild(betValueText);
 
+    function decreaseBet() {
+      if (currentBetIndex > 0) {
+        currentBetIndex--;
+        updateBet();
+      }
+    }
+
+    function increaseBet() {
+      if (currentBetIndex < BET_LEVELS.length - 1) {
+        currentBetIndex++;
+        updateBet();
+      }
+    }
+
     // update bet value text
 
-    function updateBetText() {
-      betValueText.text = BET_LEVELS[currentBetIndex].toFixed(2);
+    function updateBet() {
+      const bet = BET_LEVELS[currentBetIndex];
+      betValueText.text = bet.toFixed(2);
+
+      if (currentBetIndex === 0) {
+        popupManager.show('The minimum bet has been set');
+      }
+
+      if (currentBetIndex === BET_LEVELS.length - 1) {
+        popupManager.show('The maximum bet has been set');
+      }
     }
 
     const betText = new Text({
@@ -218,12 +242,7 @@ import { BET_LEVELS } from './game/BetLevels';
     const betDown = new TriangleButton({
       direction: 'left',
       label: '-',
-      onClick: () => {
-        if (currentBetIndex > 0) {
-          currentBetIndex--;
-          updateBetText();
-        }
-      }
+      onClick: decreaseBet,
     });
 
     betDown.position.set(920, 660);
@@ -232,12 +251,7 @@ import { BET_LEVELS } from './game/BetLevels';
     const betUp = new TriangleButton({
       direction: 'right',
       label: '+',
-      onClick: () => {
-        if (currentBetIndex < BET_LEVELS.length - 1) {
-          currentBetIndex++;
-          updateBetText();
-        }
-      }
+      onClick: increaseBet,
     });
 
     betUp.position.set(1120, 660);
@@ -277,5 +291,10 @@ import { BET_LEVELS } from './game/BetLevels';
     blockForANumberContainer.addChild(numberToGuessText);
 
     app.stage.addChild(blockForANumberContainer);
+
+    // PopupManager
+
+    const popupManager = new PopupManager(app.screen.width, app.screen.height);
+    app.stage.addChild(popupManager);
 
 })();
