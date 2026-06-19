@@ -1,7 +1,9 @@
-import { text } from 'motion/react-client';
+import { label, text } from 'motion/react-client';
 import { Application, Container, Graphics, Text, Sprite, Assets, BlurFilter } from 'pixi.js';
 import { Player } from './game/Player'
 import { TriangleButton } from './ui/buttons/TriangleButton';
+import { ModeButton } from './ui/buttons/ModeButton';
+import { GAME_MODES, GameModeId } from './game/GameMode';
 
 (async () => {
     const app = new Application();
@@ -30,21 +32,6 @@ import { TriangleButton } from './ui/buttons/TriangleButton';
     await font.load(); 
     document.fonts.add(font); 
     await document.fonts.ready;
-    
-    //MODE Display
-
-    const modeText = new Text({
-      text: 'MODE',
-      style: {
-        fontFamily: 'Anton',
-        fontSize: 32,
-        fill: 0xffd700,
-      }
-    });
-
-    modeText.position.set(1380, 185);
-
-    app.stage.addChild(modeText);
 
     // Mulitpliers Display
 
@@ -61,6 +48,95 @@ import { TriangleButton } from './ui/buttons/TriangleButton';
     multipliersText.y = 185;
 
     app.stage.addChild(multipliersText);
+
+    const multiplier10ModeText = new Text({
+      text: 'x0.95',
+      style: {
+        fontFamily: 'Anton',
+        fontSize: 44,
+        fill: 0xffd700,
+      }
+    });
+
+    multiplier10ModeText.position.set(1160, 240);
+    app.stage.addChild(multiplier10ModeText);
+
+    const multiplier20ModeText = new Text ({
+      text: 'x1.95',
+      style: {
+        fontFamily: 'Anton',
+        fontSize: 44,
+        fill: 0xffd700,
+      }
+    })
+
+    multiplier20ModeText.position.set(1160, 330);
+    app.stage.addChild(multiplier20ModeText);
+
+    const multiplier100ModeText = new Text ({
+      text: 'x95',
+      style: {
+        fontFamily: 'Anton',
+        fontSize: 44,
+        fill: 0xffd700,
+      }
+    });
+
+    multiplier100ModeText.position.set(1170, 420);
+    app.stage.addChild(multiplier100ModeText);
+    
+    //MODE Display
+
+    const modeText = new Text({
+      text: 'MODE',
+      style: {
+        fontFamily: 'Anton',
+        fontSize: 32,
+        fill: 0xffd700,
+      }
+    });
+
+    modeText.position.set(1398, 185);
+
+    app.stage.addChild(modeText);
+
+    // Mode Buttons
+    let selectedButton: ModeButton | null = null;
+
+    const mode10Button = new ModeButton('1 - 10', () => handleClick(mode10Button));
+    const mode20Button = new ModeButton('1 - 20', () => handleClick(mode20Button));
+    const mode100Button = new ModeButton('1 - 100', () => handleClick(mode100Button));
+    
+    mode10Button.position.set(1380, 250);
+    app.stage.addChild(mode10Button);
+
+    mode20Button.position.set(1380, 340);
+    app.stage.addChild(mode20Button);
+
+    mode100Button.position.set(1380, 430);
+    app.stage.addChild(mode100Button);
+
+    function handleClick(button: ModeButton) {
+      // if clicked the same button = reset ALL
+      if (selectedButton === button) {
+        selectedButton = null;
+
+        mode10Button.setActive(false);
+        mode20Button.setActive(false);
+        mode100Button.setActive(false);
+
+        return;
+      }
+
+      // new choice
+      selectedButton = button;
+
+      mode10Button.setActive(false);
+      mode20Button.setActive(false);
+      mode100Button.setActive(false);
+
+      button.setActive(true);
+    }
 
     // BALANCE Text
 
