@@ -62,6 +62,14 @@ export class TriangleButton extends Container {
       this.draw(this.defaultColor);
     });
 
+    this.bg.on('pointerover', () => {
+      this.alpha = 0.9;
+    });
+
+    this.bg.on('pointerout', () => {
+      this.alpha = 1;
+    });
+
     this.addChild(this.bg);
     this.addChild(text);
   }

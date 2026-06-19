@@ -72,6 +72,13 @@ export class ModeButton extends Container {
     this.base.eventMode = 'static';
     this.base.cursor = 'pointer';
     this.base.on('pointertap', () => this.onClick());
+    this.base.on('pointerover', () => {
+      this.alpha = 0.9;
+    });
+
+    this.base.on('pointerout', () => {
+      this.alpha = 1;
+    });
 
     // ADD ORDER
     this.addChild(this.base);
