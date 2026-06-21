@@ -5,6 +5,7 @@ export class ModeButton extends Container {
   private stroke: Graphics;
   private maskShape: Graphics;
   private gradientSprite: Sprite;
+  private hoverOverlay: Graphics;
 
   private isActive = false;
 
@@ -58,7 +59,7 @@ export class ModeButton extends Container {
     const text = new Text({
         text: label,
         style: {
-        font: 'Open Sans',
+        fontFamily: 'Open Sans',
         fontSize: 26,
         fontWeight: 'bold',
         fill: 0xffffff,
@@ -68,24 +69,37 @@ export class ModeButton extends Container {
     text.anchor.set(0.5);
     text.position.set(width / 2, height / 2);
 
+    // HOVER GRAPHICS
+
+    this.hoverOverlay = new Graphics();
+    this.hoverOverlay
+      .roundRect(0, 0, width, height, radius)
+      .fill({ color: 0x000000, alpha: 0.15 });
+
+    this.hoverOverlay.visible = false;
+
     // INPUT
     this.base.eventMode = 'static';
     this.base.cursor = 'pointer';
-    this.base.on('pointertap', () => this.onClick());
+
     this.base.on('pointerover', () => {
-      this.alpha = 0.9;
+      this.hoverOverlay.visible = true;
     });
 
     this.base.on('pointerout', () => {
-      this.alpha = 1;
+      this.hoverOverlay.visible = false;
     });
+      
+    this.base.on('pointertap', () => this.onClick());
 
     // ADD ORDER
     this.addChild(this.base);
     this.addChild(this.gradientSprite);
     this.addChild(this.maskShape);
     this.addChild(this.stroke);
+    this.addChild(this.hoverOverlay);
     this.addChild(text);
+    
 
     // 👇 IMPORTANT: SET INITIAL STATE AFTER BUILD
     this.setActive(false);

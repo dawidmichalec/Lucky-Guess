@@ -6,6 +6,8 @@ import { ModeButton } from './ui/buttons/ModeButton';
 import { GAME_MODES, GameModeId } from './game/GameMode';
 import { BET_LEVELS } from './game/BetLevels';
 import { PopupManager } from './ui/popups/PopupManager';
+import { RoundState } from './game/RoundState';
+import { AnswerButton } from './ui/buttons/AnswerButton';
 
 (async () => {
     const app = new Application();
@@ -34,6 +36,10 @@ import { PopupManager } from './ui/popups/PopupManager';
     await font.load(); 
     document.fonts.add(font); 
     await document.fonts.ready;
+
+    // RoundState
+
+    let roundState: RoundState = 'waitingForBet';
 
     // Mulitpliers Display
 
@@ -103,11 +109,11 @@ import { PopupManager } from './ui/popups/PopupManager';
     app.stage.addChild(modeText);
 
     // Mode Buttons
-    let selectedButton: ModeButton | null = null;
+    let selectedMode: GameModeId = '1-10';
 
-    const mode10Button = new ModeButton('1 - 10', () => handleClick(mode10Button));
-    const mode20Button = new ModeButton('1 - 20', () => handleClick(mode20Button));
-    const mode100Button = new ModeButton('1 - 100', () => handleClick(mode100Button));
+    const mode10Button = new ModeButton('1 - 10', () => selectMode('1-10', mode10Button));
+    const mode20Button = new ModeButton('1 - 20', () => selectMode('1-20', mode20Button));
+    const mode100Button = new ModeButton('1 - 100', () => selectMode('1-100', mode100Button));
     
     mode10Button.position.set(1380, 250);
     app.stage.addChild(mode10Button);
@@ -118,20 +124,10 @@ import { PopupManager } from './ui/popups/PopupManager';
     mode100Button.position.set(1380, 430);
     app.stage.addChild(mode100Button);
 
-    function handleClick(button: ModeButton) {
-      // if clicked the same button = reset ALL
-      if (selectedButton === button) {
-        selectedButton = null;
 
-        mode10Button.setActive(false);
-        mode20Button.setActive(false);
-        mode100Button.setActive(false);
+    function selectMode(mode: GameModeId, button: ModeButton) {
 
-        return;
-      }
-
-      // new choice
-      selectedButton = button;
+      selectedMode = mode;
 
       mode10Button.setActive(false);
       mode20Button.setActive(false);
@@ -139,6 +135,8 @@ import { PopupManager } from './ui/popups/PopupManager';
 
       button.setActive(true);
     }
+
+    selectMode('1-10', mode10Button);
 
     // BALANCE Text
 
@@ -291,6 +289,10 @@ import { PopupManager } from './ui/popups/PopupManager';
     blockForANumberContainer.addChild(numberToGuessText);
 
     app.stage.addChild(blockForANumberContainer);
+
+    // Answer Buttons
+
+    
 
     // PopupManager
 
