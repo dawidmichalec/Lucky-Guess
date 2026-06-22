@@ -1,16 +1,8 @@
 import { label, text } from 'motion/react-client';
-import { Application, Container, Graphics, Text, Sprite, Assets, BlurFilter } from 'pixi.js';
-import { Player } from './game/Player'
-import { TriangleButton } from './ui/buttons/TriangleButton';
-import { ModeButton } from './ui/buttons/ModeButton';
-import { GAME_MODES, GameModeId } from './game/GameMode';
-import { BET_LEVELS } from './game/BetLevels';
+import { Application, Sprite, Assets} from 'pixi.js';
 import { PopupManager } from './ui/popups/PopupManager';
 import { RoundState } from './game/RoundState';
-import { AnswerButton } from './ui/buttons/AnswerButton';
-import { GameUI } from './ui/GameUI';
-import { GameController } from './game/GameController';
-import { NumberDisplay } from './game/NumberDisplay';
+import { GameScene } from './game/GameScene';
 
 (async () => {
     const app = new Application();
@@ -40,89 +32,24 @@ import { NumberDisplay } from './game/NumberDisplay';
     document.fonts.add(font); 
     await document.fonts.ready;
 
-    // GameUI
+    // PopupManager
 
-    let currentBetIndex = 3;
+    const popupManager = new PopupManager(app.screen.width, app.screen.height);
 
-    const player = new Player(10000);
-    
-    const currentBet = BET_LEVELS[currentBetIndex];
+    // GameScene
 
-    const gameUI = new GameUI();
-    gameUI.updateBalance(player.balance);
-    gameUI.updateBet(BET_LEVELS[currentBetIndex]);
+    const gameScene = new GameScene(app, popupManager);
 
-    app.stage.addChild(gameUI);
+    app.stage.sortableChildren = true;
 
-    // Mode Buttons
+    app.stage.addChild(gameScene);
+    app.stage.addChild(popupManager);
 
-    const mode10Button = new ModeButton('1 - 10', () => controller.selectMode('1-10'));
-    const mode20Button = new ModeButton('1 - 20', () => controller.selectMode('1-20'));
-    const mode100Button = new ModeButton('1 - 100', () => controller.selectMode('1-100'));
-    
-    mode10Button.position.set(1380, 250);
-    app.stage.addChild(mode10Button);
-
-    mode20Button.position.set(1380, 340);
-    app.stage.addChild(mode20Button);
-
-    mode100Button.position.set(1380, 430);
-    app.stage.addChild(mode100Button);
-
-    // GameController
-
-    const controller = new GameController({
-      onBetChange: (bet) => gameUI.updateBet(bet),
-      onModeChange: (mode) => {
-        mode10Button.setActive(mode === '1-10');
-        mode20Button.setActive(mode === '1-20');
-        mode100Button.setActive(mode === '1-100');
-      },
-      onPopup: (msg) => popupManager.show(msg),
-    });
+    popupManager.zIndex = 999;
+    gameScene.zIndex = 1;
 
     // RoundState
 
     let roundState: RoundState = 'waitingForBet';
-
-    // Buttons to bets
-
-    const betDown = new TriangleButton({
-      direction: 'left',
-      label: '-',
-      onClick: () => controller.decreaseBet(),
-    });
-
-    betDown.position.set(920, 660);
-    app.stage.addChild(betDown);
-
-    const betUp = new TriangleButton({
-      direction: 'right',
-      label: '+',
-      onClick: () => controller.increaseBet(),
-    });
-
-    betUp.position.set(1120, 660);
-    app.stage.addChild(betUp);
-
-    // Container for the block for a number and a number to guess
-
-    const blockForANumberImage = await Assets.load(
-      './luckygame assets/images/block for a number.png'
-    );
-
-    const blockForANumber = new NumberDisplay(blockForANumberImage);
-    blockForANumber.position.set(710, 325);
-
-    app.stage.addChild(blockForANumber);
-
-    // Answer Buttons
-
-    
-
-    // PopupManager
-
-    const popupManager = new PopupManager(app.screen.width, app.screen.height);
-    app.stage.addChild(popupManager);
 
 })();
