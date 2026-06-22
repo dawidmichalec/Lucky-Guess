@@ -6,6 +6,8 @@ import { GameController } from './GameController';
 
 import { ModeButton } from '../ui/buttons/ModeButton';
 import { TriangleButton } from '../ui/buttons/TriangleButton';
+import { AnswerButton } from '../ui/buttons/AnswerButton';
+import { SpinButton } from '../ui/buttons/SpinButton';
 
 import { NumberDisplay } from './NumberDisplay';
 import { BET_LEVELS } from './BetLevels';
@@ -21,6 +23,12 @@ export class GameScene extends Container {
   private mode10!: ModeButton;
   private mode20!: ModeButton;
   private mode100!: ModeButton;
+
+  private answer1!: AnswerButton;
+  private answer2!: AnswerButton;
+  private answer3!: AnswerButton;
+
+  private spinButton!: SpinButton;
 
   private numberDisplay!: NumberDisplay;
 
@@ -60,6 +68,8 @@ export class GameScene extends Container {
     this.createModeButtons();
     this.createBetButtons();
     this.initNumberDisplay();
+
+    this.createSpinButton();
   }
 
   // ---------------- MODE BUTTONS ----------------
@@ -87,6 +97,8 @@ export class GameScene extends Container {
     this.controller.selectMode('1-10');
     this.syncModeUI('1-10');
   }
+
+  // ----------------ANSWER BUTTONS-----------------
 
   private syncModeUI(mode: GameModeId) {
     if (!this.mode10) return;
@@ -119,6 +131,18 @@ export class GameScene extends Container {
     betUp.position.set(1120, 660);
 
     this.addChild(betDown, betUp);
+  }
+
+  // ------------ SPIN BUTTON ------------------
+
+  private async createSpinButton() {
+    this.spinButton = new SpinButton('BET');
+
+    await this.spinButton.init();
+
+    this.spinButton.position.set(1360, 530);
+
+    this.addChild(this.spinButton);
   }
 
   // ---------------- NUMBER DISPLAY ----------------
