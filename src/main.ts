@@ -10,6 +10,7 @@ import { RoundState } from './game/RoundState';
 import { AnswerButton } from './ui/buttons/AnswerButton';
 import { GameUI } from './ui/GameUI';
 import { GameController } from './game/GameController';
+import { NumberDisplay } from './game/NumberDisplay';
 
 (async () => {
     const app = new Application();
@@ -106,38 +107,14 @@ import { GameController } from './game/GameController';
 
     // Container for the block for a number and a number to guess
 
-    const blockForANumberContainer = new Container();
-    blockForANumberContainer.position.set(710, 325);
+    const blockForANumberImage = await Assets.load(
+      './luckygame assets/images/block for a number.png'
+    );
 
-    // block for a number
+    const blockForANumber = new NumberDisplay(blockForANumberImage);
+    blockForANumber.position.set(710, 325);
 
-    const blockForANumberImage = await Assets.load('./luckygame assets/images/block for a number.png');
-    const blockForANumber = new Sprite(blockForANumberImage);
-    blockForANumber.width = 135;
-    blockForANumber.height = 150;
-    blockForANumber.position.set(0, 0);
-
-    // numberToGuess
-
-    let numberToGuess;
-    const numberToGuessText = new Text({
-      text: '?',
-      style: {
-        font: 'Open Sans',
-        fontSize: 110,
-        fontWeight: 'bold',
-        fill: 0xffffff,
-      }
-    });
-
-    numberToGuessText.position.set(33, 10);
-
-    // Add to Container
-    
-    blockForANumberContainer.addChild(blockForANumber);
-    blockForANumberContainer.addChild(numberToGuessText);
-
-    app.stage.addChild(blockForANumberContainer);
+    app.stage.addChild(blockForANumber);
 
     // Answer Buttons
 
