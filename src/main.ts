@@ -8,6 +8,8 @@ import { BET_LEVELS } from './game/BetLevels';
 import { PopupManager } from './ui/popups/PopupManager';
 import { RoundState } from './game/RoundState';
 import { AnswerButton } from './ui/buttons/AnswerButton';
+import { GameUI } from './ui/GameUI';
+import { GameController } from './game/GameController';
 
 (async () => {
     const app = new Application();
@@ -37,83 +39,25 @@ import { AnswerButton } from './ui/buttons/AnswerButton';
     document.fonts.add(font); 
     await document.fonts.ready;
 
-    // RoundState
+    // GameUI
 
-    let roundState: RoundState = 'waitingForBet';
+    let currentBetIndex = 3;
 
-    // Mulitpliers Display
-
-    const multipliersText = new Text({
-      text: 'Multiplier',
-      style: {
-        fontFamily: 'Anton',
-        fontSize: 32,
-        fill: 0xffde59,
-      }
-    });
-
-    multipliersText.x = 1150;
-    multipliersText.y = 185;
-
-    app.stage.addChild(multipliersText);
-
-    const multiplier10ModeText = new Text({
-      text: 'x0.95',
-      style: {
-        fontFamily: 'Anton',
-        fontSize: 44,
-        fill: 0xffd700,
-      }
-    });
-
-    multiplier10ModeText.position.set(1160, 240);
-    app.stage.addChild(multiplier10ModeText);
-
-    const multiplier20ModeText = new Text ({
-      text: 'x1.95',
-      style: {
-        fontFamily: 'Anton',
-        fontSize: 44,
-        fill: 0xffd700,
-      }
-    })
-
-    multiplier20ModeText.position.set(1160, 330);
-    app.stage.addChild(multiplier20ModeText);
-
-    const multiplier100ModeText = new Text ({
-      text: 'x95',
-      style: {
-        fontFamily: 'Anton',
-        fontSize: 44,
-        fill: 0xffd700,
-      }
-    });
-
-    multiplier100ModeText.position.set(1170, 420);
-    app.stage.addChild(multiplier100ModeText);
+    const player = new Player(10000);
     
-    //MODE Display
+    const currentBet = BET_LEVELS[currentBetIndex];
 
-    const modeText = new Text({
-      text: 'MODE',
-      style: {
-        fontFamily: 'Anton',
-        fontSize: 32,
-        fill: 0xffd700,
-      }
-    });
+    const gameUI = new GameUI();
+    gameUI.updateBalance(player.balance);
+    gameUI.updateBet(BET_LEVELS[currentBetIndex]);
 
-    modeText.position.set(1398, 185);
-
-    app.stage.addChild(modeText);
+    app.stage.addChild(gameUI);
 
     // Mode Buttons
-    let selectedMode: GameModeId = '1-10';
 
-    const mode10Button = new ModeButton('1 - 10', () => selectMode('1-10', mode10Button));
-    const mode20Button = new ModeButton('1 - 20', () => selectMode('1-20', mode20Button));
-    const mode100Button = new ModeButton('1 - 100', () => selectMode('1-100', mode100Button));
+    const mode10Button = new ModeButton('1 - 10', () => controller.selectMode('1-10'));
+    const mode20Button = new ModeButton('1 - 20', () => controller.selectMode('1-20'));
+    const mode100Button = new ModeButton('1 - 100', () => controller.selectMode('1-100'));
     
     mode10Button.position.set(1380, 250);
     app.stage.addChild(mode10Button);
@@ -124,123 +68,28 @@ import { AnswerButton } from './ui/buttons/AnswerButton';
     mode100Button.position.set(1380, 430);
     app.stage.addChild(mode100Button);
 
+    // GameController
 
-    function selectMode(mode: GameModeId, button: ModeButton) {
-
-      selectedMode = mode;
-
-      mode10Button.setActive(false);
-      mode20Button.setActive(false);
-      mode100Button.setActive(false);
-
-      button.setActive(true);
-    }
-
-    selectMode('1-10', mode10Button);
-
-    // BALANCE Text
-
-    const balanceWordText = new Text({
-      text: 'BALANCE',
-      style: {
-        font: 'Open Sans',
-        fontSize: '24',
-        fontWeight: 'bold',
-        fill: 0xffd700,
-      }
+    const controller = new GameController({
+      onBetChange: (bet) => gameUI.updateBet(bet),
+      onModeChange: (mode) => {
+        mode10Button.setActive(mode === '1-10');
+        mode20Button.setActive(mode === '1-20');
+        mode100Button.setActive(mode === '1-100');
+      },
+      onPopup: (msg) => popupManager.show(msg),
     });
 
-    balanceWordText.x = 430;
-    balanceWordText.y = 665;
+    // RoundState
 
-    app.stage.addChild(balanceWordText);
-
-    // Creating Player class
-
-    const player = new Player(10000);
-
-    // Current balance value text
-
-    const currentBalanceValue = new Text({
-      text: `${player.balance.toFixed(2)}`,
-      style: {
-        font: 'Open Sans',
-        fontSize: '24',
-        fontWeight: 'bold',
-        fill: 0xffffff,
-      }
-    })
-
-    currentBalanceValue.position.set(560, 665);
-
-    app.stage.addChild(currentBalanceValue);
-
-    // BET Text
-
-    let currentBetIndex = 3;
-    const currentBet = BET_LEVELS[currentBetIndex];
-
-    const betValueText = new Text({
-      text: `${currentBet.toFixed(2)}`,
-      style: {
-        font: 'Open Sans',
-        fontSize: 24,
-        fontWeight: 'bold',
-        fill: 0xffffff,
-      }
-    });
-
-    betValueText.position.set(980, 665);
-    app.stage.addChild(betValueText);
-
-    function decreaseBet() {
-      if (currentBetIndex > 0) {
-        currentBetIndex--;
-        updateBet();
-      }
-    }
-
-    function increaseBet() {
-      if (currentBetIndex < BET_LEVELS.length - 1) {
-        currentBetIndex++;
-        updateBet();
-      }
-    }
-
-    // update bet value text
-
-    function updateBet() {
-      const bet = BET_LEVELS[currentBetIndex];
-      betValueText.text = bet.toFixed(2);
-
-      if (currentBetIndex === 0) {
-        popupManager.show('The minimum bet has been set');
-      }
-
-      if (currentBetIndex === BET_LEVELS.length - 1) {
-        popupManager.show('The maximum bet has been set');
-      }
-    }
-
-    const betText = new Text({
-      text: 'BET',
-      style: {
-        font: 'Open Sans',
-        fontSize: 24,
-        fontWeight: 'bold',
-        fill: 0xffd700,
-      }
-    });
-
-    betText.position.set(1060, 665);
-    app.stage.addChild(betText);
+    let roundState: RoundState = 'waitingForBet';
 
     // Buttons to bets
 
     const betDown = new TriangleButton({
       direction: 'left',
       label: '-',
-      onClick: decreaseBet,
+      onClick: () => controller.decreaseBet(),
     });
 
     betDown.position.set(920, 660);
@@ -249,7 +98,7 @@ import { AnswerButton } from './ui/buttons/AnswerButton';
     const betUp = new TriangleButton({
       direction: 'right',
       label: '+',
-      onClick: increaseBet,
+      onClick: () => controller.increaseBet(),
     });
 
     betUp.position.set(1120, 660);
