@@ -142,7 +142,7 @@ export class ModeButton extends Container {
     this.stroke
       .roundRect(0, 0, this.buttonWidth, this.buttonHeight, this.radius)
       .stroke({
-        width: active ? 6 : 3, // 🔥 FIX: grubszy stroke
+        width: active ? 6 : 3,
         color: 0xffd700,
       });
   }

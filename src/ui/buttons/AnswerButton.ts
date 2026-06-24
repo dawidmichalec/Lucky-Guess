@@ -5,6 +5,7 @@ export class AnswerButton extends Container {
     private stroke: Graphics;
     private maskShape: Graphics;
     private gradientSprite: Sprite;
+    private hoverOverlay: Graphics;
 
     private buttonWidth: number;
     private buttonHeight: number;
@@ -13,8 +14,8 @@ export class AnswerButton extends Container {
     constructor(
         public label: string,
         private onClick: () => void,
-        width = 130,
-        height = 80,
+        width = 125,
+        height = 90,
         radius = 40,
     ) {
         super();
@@ -57,7 +58,7 @@ export class AnswerButton extends Container {
     
         this.gradientSprite = new Sprite(Texture.from(canvas));
         this.gradientSprite.mask = this.maskShape;
-        this.gradientSprite.visible = false;
+        this.gradientSprite.visible = true;
 
         // TEXT
         const text = new Text({
@@ -73,16 +74,25 @@ export class AnswerButton extends Container {
         text.anchor.set(0.5);
         text.position.set(width / 2, height / 2);
 
+        // HOVER GRAPHICS
+
+        this.hoverOverlay = new Graphics();
+        this.hoverOverlay
+        .roundRect(0, 0, width, height, radius)
+        .fill({ color: 0xffffff, alpha: 0.15 });
+
+        this.hoverOverlay.visible = false;
+
         // INPUT
         this.base.eventMode = 'static';
         this.base.cursor = 'pointer';
         this.base.on('pointertap', () => this.onClick());
         this.base.on('pointerover', () => {
-        this.alpha = 0.9;
+            this.hoverOverlay.visible = true;
         });
 
         this.base.on('pointerout', () => {
-        this.alpha = 1;
+            this.hoverOverlay.visible = false;
         });
 
         // ADD ORDER
@@ -90,6 +100,25 @@ export class AnswerButton extends Container {
         this.addChild(this.gradientSprite);
         this.addChild(this.maskShape);
         this.addChild(this.stroke);
+        this.addChild(this.hoverOverlay);
         this.addChild(text);
+
+        this.drawStroke();
+    }
+
+    private drawStroke() {
+
+        this.stroke
+        .roundRect(
+            0,
+            0,
+            this.buttonWidth,
+            this.buttonHeight,
+            this.radius
+        )
+        .stroke({
+            width: 4,
+            color: 0x77faff,
+        });
     }
 }

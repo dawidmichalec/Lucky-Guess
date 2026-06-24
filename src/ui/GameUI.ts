@@ -21,26 +21,26 @@ export class GameUI extends Container {
         fill: 0xffde59,
       },
     });
-    multipliersText.position.set(1150, 185);
+    multipliersText.position.set(1160, 185);
 
     // MULTIPLIERS (FROM GAME MODE — tak jak chciałeś)
     this.multiplier10 = new Text({
       text: `x${GAME_MODES['1-10'].baseMultiplier}`,
       style: { fontFamily: 'Anton', fontSize: 44, fill: 0xffd700 },
     });
-    this.multiplier10.position.set(1160, 240);
+    this.multiplier10.position.set(1170, 240);
 
     this.multiplier20 = new Text({
       text: `x${GAME_MODES['1-20'].baseMultiplier}`,
       style: { fontFamily: 'Anton', fontSize: 44, fill: 0xffd700 },
     });
-    this.multiplier20.position.set(1160, 330);
+    this.multiplier20.position.set(1170, 330);
 
     this.multiplier100 = new Text({
       text: `x${GAME_MODES['1-100'].baseMultiplier}`,
       style: { fontFamily: 'Anton', fontSize: 44, fill: 0xffd700 },
     });
-    this.multiplier100.position.set(1170, 420);
+    this.multiplier100.position.set(1180, 420);
 
     // MODE LABEL
     const modeText = new Text({
@@ -51,7 +51,7 @@ export class GameUI extends Container {
         fill: 0xffd700,
       },
     });
-    modeText.position.set(1398, 185);
+    modeText.position.set(1338, 185);
 
     // BALANCE
     const balanceLabel = new Text({
@@ -86,7 +86,7 @@ export class GameUI extends Container {
         fill: 0xffd700,
       },
     });
-    betLabel.position.set(1060, 665);
+    betLabel.position.set(990, 665);
 
     this.betValue = new Text({
       text: '0.00',
@@ -97,7 +97,7 @@ export class GameUI extends Container {
         fill: 0xffffff,
       },
     });
-    this.betValue.position.set(980, 665);
+    this.betValue.position.set(910, 665);
 
     // ADD
     this.addChild(

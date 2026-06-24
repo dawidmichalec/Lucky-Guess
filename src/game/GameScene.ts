@@ -66,6 +66,7 @@ export class GameScene extends Container {
 
     // BUILD SCENE
     this.createModeButtons();
+    this.createAnswerButtons();
     this.createBetButtons();
     this.initNumberDisplay();
 
@@ -87,9 +88,9 @@ export class GameScene extends Container {
       this.controller.selectMode('1-100')
     );
 
-    this.mode10.position.set(1380, 250);
-    this.mode20.position.set(1380, 340);
-    this.mode100.position.set(1380, 430);
+    this.mode10.position.set(1320, 250);
+    this.mode20.position.set(1320, 340);
+    this.mode100.position.set(1320, 430);
 
     this.addChild(this.mode10, this.mode20, this.mode100);
 
@@ -99,6 +100,40 @@ export class GameScene extends Container {
   }
 
   // ----------------ANSWER BUTTONS-----------------
+
+  private createAnswerButtons() {
+    this.answer1 = new AnswerButton(
+      '?',
+      () => {
+        console.log('Answer 1 clicked');
+      }
+    );
+
+    this.answer2 = new AnswerButton(
+      '?',
+      () => {
+        console.log('Answer 2 clicked');
+      }
+    );
+
+    this.answer3 = new AnswerButton(
+      '?',
+      () => {
+        console.log('Answer 3 clicked');
+      }
+    );
+
+    this.answer1.position.set(470, 515);
+    this.answer2.position.set(710, 515);
+    this.answer3.position.set(950, 515);
+
+    this.addChild(
+      this.answer1,
+      this.answer2,
+      this.answer3
+    );
+  }
+
 
   private syncModeUI(mode: GameModeId) {
     if (!this.mode10) return;
@@ -127,8 +162,8 @@ export class GameScene extends Container {
         },
     });
 
-    betDown.position.set(920, 660);
-    betUp.position.set(1120, 660);
+    betDown.position.set(850, 660);
+    betUp.position.set(1050, 660);
 
     this.addChild(betDown, betUp);
   }
@@ -140,7 +175,7 @@ export class GameScene extends Container {
 
     await this.spinButton.init();
 
-    this.spinButton.position.set(1360, 530);
+    this.spinButton.position.set(1300, 530);
 
     this.addChild(this.spinButton);
   }
