@@ -146,4 +146,9 @@ export class ModeButton extends Container {
         color: 0xffd700,
       });
   }
+
+  setDisabled(value: boolean) {
+    this.eventMode = value ? 'none' : 'static';
+    this.alpha = value ? 0.5 : 1;
+  }
 }

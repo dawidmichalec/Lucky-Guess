@@ -6,10 +6,14 @@ export class AnswerButton extends Container {
     private maskShape: Graphics;
     private gradientSprite: Sprite;
     private hoverOverlay: Graphics;
+    private stateFill: Graphics;
+    private text: Text;
 
     private buttonWidth: number;
     private buttonHeight: number;
     private radius: number;
+
+    private disabled = false;
 
     constructor(
         public label: string,
@@ -23,6 +27,9 @@ export class AnswerButton extends Container {
         this.buttonWidth = width;
         this.buttonHeight = height;
         this.radius = radius;
+
+        this.eventMode = 'static';
+        this.cursor = 'pointer';
 
         // BASE
 
@@ -41,6 +48,8 @@ export class AnswerButton extends Container {
         this.maskShape = new Graphics()
         .roundRect(0, 0, width, height, radius)
         .fill(0xffffff);
+
+        this.maskShape.eventMode = 'none';
 
         // GRADIENT
         const canvas = document.createElement('canvas');
@@ -61,18 +70,18 @@ export class AnswerButton extends Container {
         this.gradientSprite.visible = true;
 
         // TEXT
-        const text = new Text({
+        this.text = new Text({
             text: label,
             style: {
-            font: 'Open Sans',
-            fontSize: 26,
-            fontWeight: 'bold',
-            fill: 0xffffff,
+                font: 'Open Sans',
+                fontSize: 26,
+                fontWeight: 'bold',
+                fill: 0xffffff,
             },
         });
 
-        text.anchor.set(0.5);
-        text.position.set(width / 2, height / 2);
+        this.text.anchor.set(0.5);
+        this.text.position.set(width / 2, height / 2);
 
         // HOVER GRAPHICS
 
@@ -83,10 +92,21 @@ export class AnswerButton extends Container {
 
         this.hoverOverlay.visible = false;
 
+        // STATE FILL
+
+        this.stateFill = new Graphics();
+        this.stateFill.roundRect(0, 0, width, height, radius);
+        this.stateFill.fill(0xffffff);
+        this.stateFill.alpha = 0;
+        this.stateFill.eventMode = 'none';
+
         // INPUT
         this.base.eventMode = 'static';
         this.base.cursor = 'pointer';
-        this.base.on('pointertap', () => this.onClick());
+        this.base.on('pointertap', () => {
+            if (this.disabled) return;
+            this.onClick();
+        });
         this.base.on('pointerover', () => {
             this.hoverOverlay.visible = true;
         });
@@ -95,13 +115,20 @@ export class AnswerButton extends Container {
             this.hoverOverlay.visible = false;
         });
 
+        this.gradientSprite.eventMode = 'none';
+        this.maskShape.eventMode = 'none';
+        this.stroke.eventMode = 'none';
+        this.hoverOverlay.eventMode = 'none';
+        this.text.eventMode = 'none';
+
         // ADD ORDER
         this.addChild(this.base);
         this.addChild(this.gradientSprite);
+        this.addChild(this.stateFill);
         this.addChild(this.maskShape);
         this.addChild(this.stroke);
         this.addChild(this.hoverOverlay);
-        this.addChild(text);
+        this.addChild(this.text);
 
         this.drawStroke();
     }
@@ -120,5 +147,32 @@ export class AnswerButton extends Container {
             width: 4,
             color: 0x77faff,
         });
+    }
+
+    setLabel(value: string) {
+        this.text.text = value;
+    }
+
+    setCorrect() {
+        this.stateFill.tint = 0x74cc00;
+        this.stateFill.alpha = 1;
+    }
+
+    setWrong() {
+        this.stateFill.tint = 0xff3131;
+        this.stateFill.alpha = 1;
+    }
+
+    resetState() {
+        this.stateFill.alpha = 0;
+    }
+
+    setDisabled(value: boolean) {
+        this.disabled = value;
+
+        this.eventMode = value ? 'none' : 'static';
+        this.cursor = value ? 'default' : 'pointer';
+
+        this.hoverOverlay.visible = false;
     }
 }

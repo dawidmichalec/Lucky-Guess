@@ -10,6 +10,7 @@ export class TriangleButton extends Container {
   private bg: Graphics;
   private defaultColor = 0xffd700;
   private pressedColor = 0xe6b800;
+  private disabled = false;
 
   constructor({
     direction,
@@ -55,7 +56,7 @@ export class TriangleButton extends Container {
 
     this.bg.on('pointerup', () => {
       this.draw(this.defaultColor);
-      onClick?.();
+      if (!this.disabled) onClick?.();
     });
 
     this.bg.on('pointerupoutside', () => {
@@ -84,5 +85,14 @@ export class TriangleButton extends Container {
         0, 40,
       ])
       .fill(color);
+  }
+
+  setDisabled(value: boolean) {
+    this.disabled = value;
+
+    this.bg.eventMode = value ? 'none' : 'static';
+    this.bg.cursor = value ? 'default' : 'pointer';
+
+    this.alpha = value ? 0.5 : 1;
   }
 }
